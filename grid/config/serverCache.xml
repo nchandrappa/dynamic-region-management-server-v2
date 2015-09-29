@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE cache PUBLIC
+  "-//GemStone Systems, Inc.//GemFire Declarative Caching 8.0//EN"
+  "http://www.gemstone.com/dtd/cache8_0.dtd">
+
+<cache>
+
+	<pdx read-serialized="true" />
+
+	<region name="__regionAttributesMetadata" refid="REPLICATE">
+		<region-attributes >
+			<cache-listener>
+				<class-name>com.voya.drm.common.MetadataRegionCacheListener</class-name>
+			</cache-listener>
+		</region-attributes>
+	</region>
+
+	<function-service>
+		<function>
+			<class-name>com.voya.drm.common.CreateRegion</class-name>
+		</function>
+	</function-service>
+</cache>
+
