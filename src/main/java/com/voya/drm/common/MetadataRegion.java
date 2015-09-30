@@ -1,5 +1,7 @@
 package com.voya.drm.common;
 
+import java.util.Map;
+
 import com.gemstone.gemfire.LogWriter;
 import com.gemstone.gemfire.cache.Cache;
 import com.gemstone.gemfire.cache.CacheFactory;
@@ -34,6 +36,15 @@ public class MetadataRegion {
 
         Region<String, PdxInstance> metaRegion = cache.getRegion(REGION_ATTRIBUTES_METADATA_REGION);
 
+        return metaRegion;
+    }
+
+
+    public static Region<String, Map<String, String>> getMetadataRegionForValidation() {
+    	if(cache==null) {
+            cache = CacheFactory.getAnyInstance();
+    	}
+        Region<String, Map<String, String>> metaRegion = cache.getRegion(REGION_ATTRIBUTES_METADATA_REGION);
         return metaRegion;
     }
 

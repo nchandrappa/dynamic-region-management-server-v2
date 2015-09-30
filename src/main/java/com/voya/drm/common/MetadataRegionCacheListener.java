@@ -24,7 +24,7 @@ import com.gemstone.gemfire.management.internal.cli.GfshParser;
 import com.gemstone.gemfire.management.internal.cli.result.CommandResult;
 import com.gemstone.gemfire.pdx.PdxInstance;
 
-public class MetadataRegionCacheListener extends CacheListenerAdapter<String,PdxInstance>  implements Declarable {
+public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Map<String, String>>  implements Declarable {
 
     private Cache cache;
     private LogWriter logWriter;
@@ -39,12 +39,12 @@ public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Pdx
     }
 
     @Override
-    public void afterCreate(EntryEvent<String,PdxInstance> event) {
+    public void afterCreate(EntryEvent<String,Map<String, String>> event) {
         createRegion(event.getKey(), event.getNewValue());
     }
 
     @Override
-    public void afterUpdate(EntryEvent<String, PdxInstance> event) {
+    public void afterUpdate(EntryEvent<String, Map<String, String>> event) {
 //        PdxInstance regionOptions = event.getNewValue();
 //        PdxInstance serverOptions = (PdxInstance) regionOptions.getField("server");
 //
@@ -65,12 +65,12 @@ public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Pdx
      * not passed back to the client that triggered the event. Logging
      * an error will be sufficient.
      */
-    public void createRegion(String regionName, PdxInstance pdxInstance) {
+    public void createRegion(String regionName, Map<String, String> regionOptions) {
 
     	try {
     		MetadataRegion.validateRegionName(regionName);
     		this.logWriter.fine("Starting dynamic region creation operation in Metadata Region CacheListener");
-    		createRegionOnServer(regionName, pdxInstance);
+    		createRegionOnServer(regionName, regionOptions);
     	} catch (Exception exception) {
     		// An init() method has to catch the exception, although letting it fail would be better
     		this.logWriter.error("Create region failure for '"
@@ -78,10 +78,8 @@ public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Pdx
     	}
     }
 
-    private void createRegionOnServer(String regionName, PdxInstance pdxInstance) {
+    private void createRegionOnServer(String regionName, Map<String, String> regionOptions) {
 
-    	@SuppressWarnings("unchecked")
-		Map<String, String> regionOptions = (Map<String, String>) pdxInstance;
 
     	this.logWriter.fine("Generating GFSH Command for dynamic region creation");
     	String gfshCommand = generateGfshCommand(regionName, regionOptions);
@@ -109,18 +107,16 @@ public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Pdx
 
     private String generateGfshCommand(String regionName, Map<String, String> regionOptions) {
 
-    	String command = "create region --name=" + regionName +
-				" --type=PARTITION";
-    	StringBuffer sb = new StringBuffer(command);
+    	StringBuffer sb = new StringBuffer("create region --name=" + regionName);
     	for (Entry<String, String> option : regionOptions.entrySet()) {
     		// Appending each region option to gfsh command
-    		sb.append(" ");
+    		sb.append(" --");
     		sb.append(option.getKey());
     		sb.append("=");
     		sb.append(option.getValue());
     	}
-    	command = sb.toString();
-    	this.logWriter.info("GFSH DRC Command: " + command);
+    	String command = sb.toString();
+    	this.logWriter.info("GFSH Region Creation Command: " + command);
     	return command;
     }
 
@@ -162,7 +158,7 @@ public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Pdx
       CacheFactory.getAnyInstance().getLogger().fine("Gfsh CommandResult:" + builder.toString());
     }
 
-    public void afterDestroy(EntryEvent<String, PdxInstance> event) {
+    public void afterDestroy(EntryEvent<String, Map<String, String>> event) {
         destroyRegion(event.getKey());
     }
 
@@ -212,37 +208,7 @@ public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Pdx
     }
 
     public void init(Properties properties) {
-//    	String className = properties.getProperty("distributionPolicyClass");
-//    	if (className != null){
-//    		try {
-//    			Class<?> clazz = Class.forName(className);
-//    			this.distributionPolicy = (DistributionPolicy) clazz.newInstance();
-//    			this.distributionPolicy.init(properties);
-//    		} catch(ClassNotFoundException x){
-//    			throw new RuntimeException("distributionPolicyClass was not found: " + className);
-//    		} catch(InstantiationException | IllegalAccessException xx){
-//    			throw new RuntimeException("distributionPolicy class was found but instantiation failed: " + className, xx);
-//    		}
-//    	}
 
-    	// capture properties
-//    	String s = properties.getProperty(FAILURE_REDUNDANCY_RECOVERY_DELAY_PARAMETER);
-//    	if (s != null){
-//    		try {
-//    			redundancyRecoveryDelay = Integer.parseInt(s);
-//    		} catch(NumberFormatException x){
-//    			throw new RuntimeException(FAILURE_REDUNDANCY_RECOVERY_DELAY_PARAMETER + " property must be an integer: " + s);
-//    		}
-//    	}
-//
-//    	s = properties.getProperty(STARTUP_REDUNDANCY_RECOVERY_DELAY_PARAMETER);
-//    	if (s != null){
-//    		try {
-//    			startupRedundancyRecoveryDelay = Integer.parseInt(s);
-//    		} catch(NumberFormatException x){
-//    			throw new RuntimeException(STARTUP_REDUNDANCY_RECOVERY_DELAY_PARAMETER + " property must be an integer: " + s);
-//    		}
-//    	}
     }
 
 }

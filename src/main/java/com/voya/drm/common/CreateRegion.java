@@ -67,7 +67,8 @@ public class CreateRegion implements Function, Declarable {
         // the MetadataRegionCacheListener should fire synchronously for the previous put
 
         region = this.cache.getRegion(regionName);
-        PdxInstance previousMetadata = MetadataRegion.getMetadataRegion().get(regionName);
+        Map<String, String> previousMetadata = MetadataRegion.
+        		getMetadataRegionForValidation().get(regionName);
         if (region == null && previousMetadata != null) {
             this.cache.getLogger().info("Error: Metadata region present but region was not created.");
             removeMetadataEntry(regionName);
