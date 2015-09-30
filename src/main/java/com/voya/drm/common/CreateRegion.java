@@ -1,6 +1,7 @@
 package com.voya.drm.common;
 
 import static com.voya.drm.common.ExceptionHelpers.sendStrippedException;
+
 import com.voya.drm.common.MetadataRegion;
 
 import java.util.List;
@@ -30,18 +31,18 @@ public class CreateRegion implements Function, Declarable {
     public void execute(FunctionContext context) {
         try {
         	Object arguments = context.getArguments();
-            if (arguments==null || !(arguments instanceof List) || ((List<?>)arguments).size()!=2) {
+            if (arguments==null || !(arguments instanceof List) || ((List<?>)arguments).size() != 2) {
             	throw new Exception("Two arguments required in list");
             }
 
             Object regionName = ((List<?>) arguments).get(0);
             MetadataRegion.validateRegionName(regionName);
 
-            Object regionOptions = ((List<?>) arguments).get(1);
+            @SuppressWarnings("unchecked")
+			Map<String, String> regionOptions = (Map<String, String>) ((List<?>) arguments).get(1);
 
             this.cache.getLogger().fine("Received Dyanamic Creation Request for: " + regionName);
-            @SuppressWarnings("unchecked")
-			String status = createOrRetrieveRegion((String)regionName, (Map<String, String>)regionOptions);
+            String status = createOrRetrieveRegion((String)regionName, (Map<String, String>)regionOptions);
             context.getResultSender().lastResult(status);
 
         } catch (Exception exception) {
@@ -55,8 +56,8 @@ public class CreateRegion implements Function, Declarable {
     	String result = SUCCESSFUL;
     	Region<?,?> region = this.cache.getRegion(regionName);
 
-        if(region != null) {
-        	this.cache.getLogger().info("Region Already Exsits: " + regionName);
+        if (region != null) {
+        	this.cache.getLogger().info("Region Already Exists: " + regionName);
         	result = ALREADY_EXISTS;
         	return result;
         }
@@ -65,7 +66,7 @@ public class CreateRegion implements Function, Declarable {
         MetadataRegion.checkLimits();
 
         // the MetadataRegionCacheListener should fire synchronously for the previous put
-
+        // region should now be populated
         region = this.cache.getRegion(regionName);
         PdxInstance previousMetadata = MetadataRegion.getMetadataRegion().get(regionName);
         if (region == null && previousMetadata != null) {

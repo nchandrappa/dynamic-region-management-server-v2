@@ -49,53 +49,51 @@ public class MetadataRegion {
     			logWriter.warning(metadataRegion.getFullPath() + " has " + size + " entries, possible performance overhead");
     		}
     	} catch (Exception e) {
-    		;
     	}
     }
 
     public static void validateRegionName(final Object key) throws Exception {
 
-    	if(key==null || !(key instanceof String) || ((String)key).length()==0) {
+    	if (key==null || !(key instanceof String) || ((String)key).length()==0) {
     		throw new Exception("Region name must be non-empty String");
     	}
 
     	String regionName = (String)key;
 
-    	for(char c : RESERVED_CHARS) {
-    		if(regionName.indexOf(c)>=0) {
+    	for (char c : RESERVED_CHARS) {
+    		if (regionName.indexOf(c)>=0) {
     			throw new Exception("Region name '" + regionName + "' cannot include reserved char '" + c + "'");
     		}
     	}
 
-		if(regionName.startsWith("__")) {
+		if (regionName.startsWith("__")) {
 			throw new Exception("Region name '" + regionName + "' cannot begin '__', reserved for Gemfire");
 		}
 
 		// Issue at most warning on region name
 		String regionNameClean = cleanRegionName(regionName);
-		if(!regionName.equals(regionNameClean)) {
+		if (!regionName.equals(regionNameClean)) {
 			cache.getLogger().warning("Region name '" + regionName + "' contains special characters");
 		} else {
-			if(LETTERS.indexOf(regionNameClean.charAt(0))==-1) {
+			if (LETTERS.indexOf(regionNameClean.charAt(0)) == -1) {
 				cache.getLogger().warning("Region name '" + regionName + "' should begin with a letter");
 			} else {
-				if(regionName.length()>256) {
+				if (regionName.length()>256) {
 					cache.getLogger().warning("Region name '" + regionName + "' long, at " + regionName.length() + " chars");
 				} else {
-					for(String anotherRegionName : getMetadataRegion().keySet()) {
+					for (String anotherRegionName : getMetadataRegion().keySet()) {
 						String anotherRegionNameClean = cleanRegionName(anotherRegionName);
 
 						/* Warning if similar but not identical to another region, ignoring
 						 * case and special chars.
 						 * Identical may be valid, eg. if updating existing region and validating key.
 						 */
-						if(anotherRegionNameClean.equalsIgnoreCase(regionNameClean) &&
+						if (anotherRegionNameClean.equalsIgnoreCase(regionNameClean) &&
 								(!anotherRegionName.equals(regionName))) {
 							cache.getLogger().warning("Region name '" + regionName + "' similar to existing region '" + anotherRegionName + "'");
 						}
 					}
 				}
-
 			}
 		}
     }

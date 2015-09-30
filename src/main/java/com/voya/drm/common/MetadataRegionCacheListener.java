@@ -109,18 +109,16 @@ public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Pdx
 
     private String generateGfshCommand(String regionName, Map<String, String> regionOptions) {
 
-    	String command = "create region --name=" + regionName +
-				" --type=PARTITION";
-    	StringBuffer sb = new StringBuffer(command);
+    	StringBuffer sb = new StringBuffer("create region --name=" + regionName);
     	for (Entry<String, String> option : regionOptions.entrySet()) {
     		// Appending each region option to gfsh command
-    		sb.append(" ");
+    		sb.append(" --");
     		sb.append(option.getKey());
     		sb.append("=");
     		sb.append(option.getValue());
     	}
-    	command = sb.toString();
-    	this.logWriter.info("GFSH DRC Command: " + command);
+    	String command = sb.toString();
+    	this.logWriter.info("GFSH create region command: " + command);
     	return command;
     }
 
@@ -191,7 +189,7 @@ public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Pdx
             logInfo("MetadataRegionCacheListener deleting region named: " + regionName);
             try {
             	region.destroyRegion();
-            } catch (CacheWriterException|TimeoutException exception1) {
+            } catch (CacheWriterException | TimeoutException exception1) {
             	if(this.logWriter.errorEnabled()) {
             		this.logWriter.error("Distributed Region.destroyRegion() failed on this node for region '" + regionName + "'", exception1);
             	}
@@ -212,37 +210,5 @@ public class MetadataRegionCacheListener extends CacheListenerAdapter<String,Pdx
     }
 
     public void init(Properties properties) {
-//    	String className = properties.getProperty("distributionPolicyClass");
-//    	if (className != null){
-//    		try {
-//    			Class<?> clazz = Class.forName(className);
-//    			this.distributionPolicy = (DistributionPolicy) clazz.newInstance();
-//    			this.distributionPolicy.init(properties);
-//    		} catch(ClassNotFoundException x){
-//    			throw new RuntimeException("distributionPolicyClass was not found: " + className);
-//    		} catch(InstantiationException | IllegalAccessException xx){
-//    			throw new RuntimeException("distributionPolicy class was found but instantiation failed: " + className, xx);
-//    		}
-//    	}
-
-    	// capture properties
-//    	String s = properties.getProperty(FAILURE_REDUNDANCY_RECOVERY_DELAY_PARAMETER);
-//    	if (s != null){
-//    		try {
-//    			redundancyRecoveryDelay = Integer.parseInt(s);
-//    		} catch(NumberFormatException x){
-//    			throw new RuntimeException(FAILURE_REDUNDANCY_RECOVERY_DELAY_PARAMETER + " property must be an integer: " + s);
-//    		}
-//    	}
-//
-//    	s = properties.getProperty(STARTUP_REDUNDANCY_RECOVERY_DELAY_PARAMETER);
-//    	if (s != null){
-//    		try {
-//    			startupRedundancyRecoveryDelay = Integer.parseInt(s);
-//    		} catch(NumberFormatException x){
-//    			throw new RuntimeException(STARTUP_REDUNDANCY_RECOVERY_DELAY_PARAMETER + " property must be an integer: " + s);
-//    		}
-//    	}
     }
-
 }
