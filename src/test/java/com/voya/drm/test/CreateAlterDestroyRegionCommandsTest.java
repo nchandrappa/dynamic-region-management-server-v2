@@ -24,10 +24,10 @@ public class CreateAlterDestroyRegionCommandsTest {
 
     String regionName = "xxx";
     
-//    String command = "create region --name=" + regionName + " --type=PARTITION";
+    String command = "create region --name=" + regionName + " --type=PARTITION";
 //    String command = "destroy region --name=" + regionName;
 //    String command = "alter region --name=" + regionName + " --entry-time-to-live-expiration=20";
-    String command = "describe region --name=" + regionName;
+//    String command = "describe region --name=" + regionName;
     
       CommandManager commandManager;
     try {

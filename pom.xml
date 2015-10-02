@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.voya</groupId>
   <artifactId>dynamic-region-management-server</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.0.2</version>
   <name>dynamic-region-management-server-v2</name>
   <description>dynamic region creation project (Version 2)</description>
   <packaging>jar</packaging>
