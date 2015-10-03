@@ -21,12 +21,13 @@ public class CreateRegion implements Function, Declarable {
     public static final String SUCCESSFUL = "successful";
     public static final String ALREADY_EXISTS = "alreadyExists";
 
-    private CreateRegionHelper createRegionHelper = new CreateRegionHelper();
+    private CreateRegionHelper2 createRegionHelper;
     RegionNameValidator regionNameValidator;
 
     public CreateRegion() {
         cache = CacheFactory.getAnyInstance();
         regionNameValidator = new RegionNameValidator(cache);
+        createRegionHelper = new CreateRegionHelper2(cache);
     }
 
     public void execute(FunctionContext context) {
@@ -52,7 +53,7 @@ public class CreateRegion implements Function, Declarable {
     }
 
 
-    private String createOrRetrieveRegion(String regionName, Map<String, String> regionOptions) throws RuntimeException, IllegalAccessException, InvocationTargetException {
+    String createOrRetrieveRegion(String regionName, Map<String, String> regionOptions) throws RuntimeException, IllegalAccessException, InvocationTargetException {
 
       String result = SUCCESSFUL;
       Region<?,?> region = this.cache.getRegion(regionName);

@@ -29,12 +29,10 @@ public class CreateRegionHelper {
 
     private CommandManager commandManager;
     private GfshParser gfshParser = new GfshParser(commandManager);
-    RegionNameValidator regionNameValidator;
 
-    public CreateRegionHelper() {
-        cache = CacheFactory.getAnyInstance();
-        regionNameValidator = new RegionNameValidator(cache);
-        logWriter = cache.getLogger();
+    public CreateRegionHelper(Cache cache) {
+         this.cache = cache;
+         logWriter = cache.getLogger();
         
         try {
 	      commandManager = CommandManager.getInstance();
@@ -51,13 +49,6 @@ public class CreateRegionHelper {
      * an error will be sufficient.
      */
     public void createRegion(String regionName, Map<String, String> regionOptions) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-
-        logWriter.fine("Starting dynamic region creation operation in Metadata Region CacheListener");
-        createRegionOnServer(regionName, regionOptions);
-     }
-
-    private void createRegionOnServer(String regionName, Map<String, String> regionOptions) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-
       logWriter.fine("Generating GFSH Command for dynamic region creation");
       String gfshCommand = generateGfshCommand(regionName, regionOptions);
 
@@ -89,7 +80,7 @@ public class CreateRegionHelper {
       return command;
     }
 
-    private static void dumpResult(CommandResult commandResult) {
+    private void dumpResult(CommandResult commandResult) {
       StringBuilder builder = new StringBuilder();
       commandResult.resetToFirstLine();
       while (commandResult.hasNextLine()) {
