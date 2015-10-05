@@ -1,5 +1,6 @@
 package com.voya.drm.test;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Random;
@@ -19,8 +20,12 @@ public class CreateAlterDestroyRegionCommandsTest {
 
 	@BeforeClass
 	public static void init() {
+		
+		File x = new File(".");
+		System.out.println(x.getAbsolutePath());
+		
         CacheFactory cf = new CacheFactory();
-        cf.set("cache-xml-file", "/Users/wwilliams/Documents/git/dynamic-region-management-server-v2/grid/config/serverCache.xml");
+        cf.set("cache-xml-file", "./grid/config/serverCache.xml");
         cf.set("locators", "gemhost[10334]");
         Cache cache = cf.create();
 	}
@@ -62,14 +67,69 @@ public class CreateAlterDestroyRegionCommandsTest {
 
   @Test
   public void testCreateAlterDestroyCommand() {
-	  Random r = new Random(System.currentTimeMillis());
+	Random r = new Random(System.currentTimeMillis());
+	String regionName = "xxx" + r.nextInt(10000);   
+	String alterAttributes = " --entry-time-to-live-expiration=20";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+  }
+  
+  @Test
+  public void testAllAlterCommands() {
 	  
-    String regionName = "xxx" + r.nextInt(10000);
-    
-    String createCommand = "create region --name=" + regionName + " --type=PARTITION --" + CliStrings.CREATE_REGION__STATISTICSENABLED + "=true";
+	Random r = new Random(System.currentTimeMillis());
+	String regionName = "xxx" + r.nextInt(10000);   
+	String alterAttributes = "--entry-idle-time-expiration=20";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
 
+	// entry-time-to-live-expiration has a bug
+	
+	alterAttributes = "--entry-idle-time-expiration-action=destroy";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+
+	alterAttributes = "--entry-time-to-live-expiration-action=destroy";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+
+	alterAttributes = "--region-idle-time-expiration=20";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+
+	alterAttributes = "--region-idle-time-expiration-action=destroy";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+
+	alterAttributes = "--region-time-to-live-expiration=20";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+
+	alterAttributes = "--region-time-to-live-expiration-action=destroy";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+
+	alterAttributes = "--cache-listener=com.voya.dummy1,com.voya.dummy2";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+
+	alterAttributes = "--cache-loader=com.voya.dummy.loader";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+
+	alterAttributes = "--cache-loader=com.voya.dummy.writer";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+	
+	alterAttributes = "--async-event-queue-id=111,222";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+	
+	alterAttributes = "--gateway-sender-id=111,222";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+	
+	alterAttributes = "--enable-cloning=true";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+	
+	alterAttributes = "--eviction-max=10";
+	doCreateAlterDestroyCommand(regionName, alterAttributes);
+	
+	  
+  }
+  
+  public void doCreateAlterDestroyCommand(String regionName, String alterAttributes) {
+	  
+    String createCommand = "create region --name=" + regionName + " --type=PARTITION --" + CliStrings.CREATE_REGION__STATISTICSENABLED + "=true";
     String destroyCommand = "destroy region --name=" + regionName;
-    String alterCommand = "alter region --name=" + regionName + " --entry-time-to-live-expiration=20";
+    String alterCommand = "alter region --name=" + regionName + alterAttributes;
     String describeCommand = "describe region --name=" + regionName;
     
       CommandManager commandManager;

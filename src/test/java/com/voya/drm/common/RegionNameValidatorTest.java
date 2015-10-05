@@ -15,7 +15,7 @@ public class RegionNameValidatorTest {
 	@BeforeClass
 	public static void init() {
         CacheFactory cf = new CacheFactory();
-        cf.set("cache-xml-file", "/Users/wwilliams/Documents/git/dynamic-region-management-server-v2/grid/config/serverCache.xml");
+        cf.set("cache-xml-file", "./grid/config/serverCache.xml");
         cf.set("locators", "gemhost[10334]");
         Cache cache = cf.create();
         regionNameValidator = new RegionNameValidator(cache);

@@ -19,7 +19,7 @@ public class RegionOptionsBuilder {
 	public static final Map<String, String[]> regionOptionsMap = new HashMap<String, String[]>() {{
 		put("type", new String[] {"setType", "String"});
 		put("template-region", new String[] {"setTemplateRegion", "String"});
-		put("group", new String[] {"setGroup", "String[]"});
+		put("group", new String[] {"setGroups", "String[]"});
 		put("skip-if-exists", new String[] {"setSkipIfExists", "Boolean"});
 		put("key-constraint", new String[] {"setKeyConstraint", "String"});
 		put("value-constraint", new String[] {"setValueConstraint", "String"});
@@ -37,11 +37,11 @@ public class RegionOptionsBuilder {
 		put("enable-synchronous-disk", new String[] {"setEnableSynchronousDisk", "Boolean"});
 		put("enable-async-conflation", new String[] {"setEnableAsyncConflation", "Boolean"});
 		put("enable-subscription-conflation", new String[] {"setEnableSubscriptionConflation", "Boolean"});
-		put("cache-listener", new String[] {"setCacheListener", "String[]"});
+		put("cache-listener", new String[] {"setCacheListeners", "String[]"});
 		put("cache-loader", new String[] {"setCacheLoader", "String"});
 		put("cache-writer", new String[] {"setCacheWriter", "String"});
-		put("async-event-queue-id", new String[] {"setAsyncEventQueueId", "String[]"});
-		put("gateway-sender-id", new String[] {"setGatewaySenderId", "String[]"});
+		put("async-event-queue-id", new String[] {"setAsyncEventQueueIds", "String[]"});
+		put("gateway-sender-id", new String[] {"setGatewaySenderIds", "String[]"});
 		put("enable-concurrency-check", new String[] {"setEnableConcurrencyCheck", "Boolean"});
 		put("enable-cloning", new String[] {"setEnableCloning", "Boolean"});
 		put("concurrency-level", new String[] {"setConcurrencyLevel", "Integer"});

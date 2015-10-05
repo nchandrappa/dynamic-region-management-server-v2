@@ -6,11 +6,11 @@
 <cache>
   <pdx read-serialized="true" />
 
-	<function-service>
+<!--	<function-service>
 		<function>
 			<class-name>com.voya.drm.common.CreateRegion</class-name>
 		</function>
 	</function-service>
-
+-->
 </cache>
 
