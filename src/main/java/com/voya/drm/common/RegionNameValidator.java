@@ -9,7 +9,7 @@ import com.gemstone.gemfire.cache.Region;
  *
  */
 public class RegionNameValidator {
-	
+
   private static final String LETTERS = "abcdefghijklmnopqrstuvwxyz".toLowerCase()
                       + "abcdefghijklmnopqrstuvwxyz".toUpperCase();
   private static final String NUMBERS = "0123456789";
@@ -26,6 +26,7 @@ public class RegionNameValidator {
   private static final char[] RESERVED_CHARS = { Region.SEPARATOR_CHAR };
 
   public RegionNameValidator(Cache cache) {
+	  this.cache = cache;
   }
 
   /**
@@ -35,8 +36,8 @@ public class RegionNameValidator {
    */
   public void validateRegionName(final Object key) throws Exception {
 
-    if (key==null || 
-      !(key instanceof String) || 
+    if (key==null ||
+      !(key instanceof String) ||
       ((String) key).length() == 0) {
         throw new Exception("Region name must be non-empty String");
     }
@@ -44,23 +45,23 @@ public class RegionNameValidator {
     String regionName = (String) key;
 
     if (regionName.startsWith("__")) {
-      throw new Exception("Region name '" + 
+      throw new Exception("Region name '" +
         regionName + "' cannot begin '__', reserved for Gemfire");
     }
 
     // Issue at most warning on region name
     String regionNameClean = cleanRegionName(regionName);
     if (!regionName.equals(regionNameClean)) {
-      cache.getLogger().warning("Region name '" + regionName + 
+      cache.getLogger().warning("Region name '" + regionName +
     		  "' contains invalid special characters");
     } else {
       if (LETTERS.indexOf(regionNameClean.charAt(0)) == -1) {
-        cache.getLogger().warning("Region name '" + regionName + 
+        cache.getLogger().warning("Region name '" + regionName +
         		"' should begin with a letter");
       } else {
         if (regionName.length() > 256) {
           cache.getLogger().warning(
-        	"Region name '" + regionName + "' too long, at " + 
+        	"Region name '" + regionName + "' too long, at " +
             regionName.length() + " chars");
         }
       }
@@ -73,7 +74,7 @@ public class RegionNameValidator {
    *
    * @param regionName
    * @return  - A String, not null but possibly an empty String.
- * @throws Exception 
+ * @throws Exception
    */
   public String cleanRegionName(/*@NonNull*/ final String regionName) throws Exception {
     StringBuffer sb = new StringBuffer();
@@ -84,12 +85,13 @@ public class RegionNameValidator {
       if(ACCEPTABLE_NAME_CHARACTERS.indexOf(c) != -1) {
         sb.append(c);
       }
-      
+
       for (char cr : RESERVED_CHARS) {
           if (c == cr) {
-        	  cache.getLogger().info("RESERVED_CHARS=" + RESERVED_CHARS.toString() + ". char=" + String.valueOf(cr));
-        	  
-            throw new Exception("Region name '" + 
+        	  cache.getLogger().info("RESERVED_CHARS=" +
+        			  new String(RESERVED_CHARS).toString() + ". char=" + String.valueOf(cr));
+
+            throw new Exception("Region name '" +
               regionName + "' cannot include reserved char '" + c + "'");
           }
         }

@@ -28,12 +28,12 @@ public class CreateRegionHelper {
     private LogWriter logWriter;
 
     private CommandManager commandManager;
-    private GfshParser gfshParser = new GfshParser(commandManager);
+    private GfshParser gfshParser;
 
     public CreateRegionHelper(Cache cache) {
          this.cache = cache;
          logWriter = cache.getLogger();
-        
+
         try {
 	      commandManager = CommandManager.getInstance();
 	    } catch (ClassNotFoundException | IOException e) {
@@ -124,20 +124,20 @@ public class CreateRegionHelper {
             } catch (CacheWriterException | TimeoutException exception1) {
               if (logWriter.errorEnabled()) {
                 logWriter
-                .error("Distributed Region.destroyRegion() failed on this node for region '" + 
+                .error("Distributed Region.destroyRegion() failed on this node for region '" +
                 regionName + "'", exception1);
               }
             } catch (Exception exception2) {
               if (logWriter.fineEnabled()) {
                 logWriter
-                .fine("Distributed Region.destroyRegion() failed on this node for region '" + 
+                .fine("Distributed Region.destroyRegion() failed on this node for region '" +
                   regionName + "'", exception2);
               }
             }
       } else {
         if (logWriter.fineEnabled()) {
           logWriter
-            .fine("Distributed Region.destroyRegion() failed on this node for region '" + 
+            .fine("Distributed Region.destroyRegion() failed on this node for region '" +
               regionName + "', because it does not exist");
         }
       }

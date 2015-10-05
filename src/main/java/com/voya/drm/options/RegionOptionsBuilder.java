@@ -2,8 +2,10 @@ package com.voya.drm.options;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.PatternSyntaxException;
 
 import com.voya.drm.domain.RegionOption;
@@ -16,10 +18,10 @@ public class RegionOptionsBuilder {
 
 	@SuppressWarnings("serial")
 
-	public static final Map<String, String[]> regionOptionsMap = new HashMap<String, String[]>() {{
+	private static final Map<String, String[]> regionOptionsMap = new HashMap<String, String[]>() {{
 		put("type", new String[] {"setType", "String"});
 		put("template-region", new String[] {"setTemplateRegion", "String"});
-		put("group", new String[] {"setGroup", "String[]"});
+		put("group", new String[] {"setGroups", "String[]"});
 		put("skip-if-exists", new String[] {"setSkipIfExists", "Boolean"});
 		put("key-constraint", new String[] {"setKeyConstraint", "String"});
 		put("value-constraint", new String[] {"setValueConstraint", "String"});
@@ -37,11 +39,11 @@ public class RegionOptionsBuilder {
 		put("enable-synchronous-disk", new String[] {"setEnableSynchronousDisk", "Boolean"});
 		put("enable-async-conflation", new String[] {"setEnableAsyncConflation", "Boolean"});
 		put("enable-subscription-conflation", new String[] {"setEnableSubscriptionConflation", "Boolean"});
-		put("cache-listener", new String[] {"setCacheListener", "String[]"});
+		put("cache-listener", new String[] {"setCacheListeners", "String[]"});
 		put("cache-loader", new String[] {"setCacheLoader", "String"});
 		put("cache-writer", new String[] {"setCacheWriter", "String"});
-		put("async-event-queue-id", new String[] {"setAsyncEventQueueId", "String[]"});
-		put("gateway-sender-id", new String[] {"setGatewaySenderId", "String[]"});
+		put("async-event-queue-id", new String[] {"setAsyncEventQueueIds", "String[]"});
+		put("gateway-sender-id", new String[] {"setGatewaySenderIds", "String[]"});
 		put("enable-concurrency-check", new String[] {"setEnableConcurrencyCheck", "Boolean"});
 		put("enable-cloning", new String[] {"setEnableCloning", "Boolean"});
 		put("concurrency-level", new String[] {"setConcurrencyLevel", "Integer"});
@@ -55,6 +57,10 @@ public class RegionOptionsBuilder {
 		put("compressor", new String[] {"setCompressor", "String"});
 	}};
 
+	public static Map<String, String[]> getRegionOptionsMap() {
+		return Collections.unmodifiableMap(regionOptionsMap);
+	}
+
 	/**
 	 * Builds a RegionOption from a map of key-value attribute names and values.
 	 * @param regionOption
@@ -66,9 +72,10 @@ public class RegionOptionsBuilder {
 		String methodName = null;
 		String argType = null;
 		Object castedValue = null;
-		
+
 		try {
-			for (String optionName: regionOptions.keySet()) {
+			for (Entry<String, String> option: regionOptions.entrySet()) {
+				String optionName = option.getKey();
 				String[] signatureArgs = regionOptionsMap.get(optionName);
 				if (signatureArgs == null) {
 				  throw new RuntimeException(optionName + ": I do not recognize this option name");
@@ -83,12 +90,12 @@ public class RegionOptionsBuilder {
 			}
 
 		} catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-			throw new RuntimeException("Server had an error populating method " + methodName + 
+			throw new RuntimeException("Server had an error populating method " + methodName +
 					" with value " + castedValue + " and type " + argType);
 		}
 		return regionOption;
 	}
-	
+
 	private Object castValue(String optionName, String value, String type) {
 		try {
 			switch(type) {

@@ -21,8 +21,8 @@ public class CreateRegion implements Function, Declarable {
     public static final String SUCCESSFUL = "successful";
     public static final String ALREADY_EXISTS = "alreadyExists";
 
-    private CreateRegionHelper2 createRegionHelper;
-    RegionNameValidator regionNameValidator;
+    private transient CreateRegionHelper2 createRegionHelper;
+    private transient RegionNameValidator regionNameValidator;
 
     public CreateRegion() {
         cache = CacheFactory.getAnyInstance();
@@ -65,7 +65,7 @@ public class CreateRegion implements Function, Declarable {
         }
 
         createRegionHelper.createRegion(regionName, regionOptions);
-        
+
         // region should now be populated
         region = this.cache.getRegion(regionName);
         if (region == null) {

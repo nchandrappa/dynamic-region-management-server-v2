@@ -71,13 +71,18 @@ public class RegionOption {
 
 
 	public String[] getGroups() {
-		return groups;
+		if (groups != null) {
+			return (String[]) groups.clone();
+		}
+		return null;
 	}
 
 
 
 	public void setGroups(String[] groups) {
-		this.groups = groups;
+		if (groups != null) {
+			this.groups = groups.clone();
+		}
 	}
 
 
@@ -279,13 +284,18 @@ public class RegionOption {
 
 
 	public String[] getCacheListeners() {
-		return cacheListeners;
+		if (cacheListeners != null) {
+			return (String[]) cacheListeners.clone();
+		}
+		return null;
 	}
 
 
 
 	public void setCacheListeners(String[] cacheListeners) {
-		this.cacheListeners = cacheListeners;
+		if (cacheListeners != null) {
+			this.cacheListeners = cacheListeners.clone();
+		}
 	}
 
 
@@ -315,25 +325,35 @@ public class RegionOption {
 
 
 	public String[] getAsyncEventQueueIds() {
-		return asyncEventQueueIds;
+		if (asyncEventQueueIds != null) {
+			return (String[]) asyncEventQueueIds.clone();
+		}
+		return null;
 	}
 
 
 
 	public void setAsyncEventQueueIds(String[] asyncEventQueueIds) {
-		this.asyncEventQueueIds = asyncEventQueueIds;
+		if (asyncEventQueueIds != null) {
+			this.asyncEventQueueIds = asyncEventQueueIds.clone();
+		}
 	}
 
 
 
 	public String[] getGatewaySenderIds() {
-		return gatewaySenderIds;
+		if (gatewaySenderIds != null) {
+			return (String[]) gatewaySenderIds.clone();
+		}
+		return null;
 	}
 
 
 
 	public void setGatewaySenderIds(String[] gatewaySenderIds) {
-		this.gatewaySenderIds = gatewaySenderIds;
+		if (gatewaySenderIds != null) {
+			this.gatewaySenderIds = gatewaySenderIds.clone();
+		}
 	}
 
 
