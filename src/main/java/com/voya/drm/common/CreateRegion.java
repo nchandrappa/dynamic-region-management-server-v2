@@ -22,8 +22,8 @@ public class CreateRegion implements Function, Declarable {
     public static final String ALREADY_EXISTS = "alreadyExists";
 
 
-    private CreateRegionHelper createRegionHelper;
-    RegionNameValidator regionNameValidator;
+    private transient CreateRegionHelper createRegionHelper;
+    transient RegionNameValidator regionNameValidator;
 
     public CreateRegion() {
         cache = CacheFactory.getAnyInstance();

@@ -20,10 +20,10 @@ public class CreateAlterDestroyRegionCommandsTest {
 
 	@BeforeClass
 	public static void init() {
-		
+
 		File x = new File(".");
 		System.out.println(x.getAbsolutePath());
-		
+
         CacheFactory cf = new CacheFactory();
         cf.set("cache-xml-file", "./grid/config/serverCache.xml");
         cf.set("locators", "gemhost[10334]");
@@ -33,20 +33,20 @@ public class CreateAlterDestroyRegionCommandsTest {
   @Test
   public void testParseResult() {
     String regionName = "xxx";
-    
+
     String command = "create region --name=" + regionName + " --type=PARTITION";
 //    String command = "destroy region --name=" + regionName;
 //    String command = "alter region --name=" + regionName + " --entry-time-to-live-expiration=20";
 //    String command = "describe region --name=" + regionName;
-    
+
       CommandManager commandManager;
     try {
       commandManager = CommandManager.getInstance();
         GfshParser gfshParser = new GfshParser(commandManager);
         ParseResult parseResult = gfshParser.parse(command);
-        
+
         System.out.println(parseResult.toString());
-        
+
         CommandResult commandResult = (CommandResult) parseResult.getMethod().invoke(parseResult.getInstance(), parseResult.getArguments());
         dumpResult(commandResult);
     } catch (ClassNotFoundException | IOException e) {
@@ -63,26 +63,26 @@ public class CreateAlterDestroyRegionCommandsTest {
       e.printStackTrace();
     }
   }
- 
+
 
   @Test
   public void testCreateAlterDestroyCommand() {
 	Random r = new Random(System.currentTimeMillis());
-	String regionName = "xxx" + r.nextInt(10000);   
+	String regionName = "xxx" + r.nextInt(10000);
 	String alterAttributes = " --entry-time-to-live-expiration=20";
 	doCreateAlterDestroyCommand(regionName, alterAttributes);
   }
-  
+
   @Test
   public void testAllAlterCommands() {
-	  
+
 	Random r = new Random(System.currentTimeMillis());
-	String regionName = "xxx" + r.nextInt(10000);   
+	String regionName = "xxx" + r.nextInt(10000);
 	String alterAttributes = "--entry-idle-time-expiration=20";
 	doCreateAlterDestroyCommand(regionName, alterAttributes);
 
 	// entry-time-to-live-expiration has a bug
-	
+
 	alterAttributes = "--entry-idle-time-expiration-action=destroy";
 	doCreateAlterDestroyCommand(regionName, alterAttributes);
 
@@ -109,29 +109,29 @@ public class CreateAlterDestroyRegionCommandsTest {
 
 	alterAttributes = "--cache-loader=com.voya.dummy.writer";
 	doCreateAlterDestroyCommand(regionName, alterAttributes);
-	
+
 	alterAttributes = "--async-event-queue-id=111,222";
 	doCreateAlterDestroyCommand(regionName, alterAttributes);
-	
+
 	alterAttributes = "--gateway-sender-id=111,222";
 	doCreateAlterDestroyCommand(regionName, alterAttributes);
-	
+
 	alterAttributes = "--enable-cloning=true";
 	doCreateAlterDestroyCommand(regionName, alterAttributes);
-	
+
 	alterAttributes = "--eviction-max=10";
 	doCreateAlterDestroyCommand(regionName, alterAttributes);
-	
-	  
+
+
   }
-  
+
   public void doCreateAlterDestroyCommand(String regionName, String alterAttributes) {
-	  
+
     String createCommand = "create region --name=" + regionName + " --type=PARTITION --" + CliStrings.CREATE_REGION__STATISTICSENABLED + "=true";
     String destroyCommand = "destroy region --name=" + regionName;
-    String alterCommand = "alter region --name=" + regionName + alterAttributes;
+    String alterCommand = "alter region --name=" + regionName + " " + alterAttributes;
     String describeCommand = "describe region --name=" + regionName;
-    
+
       CommandManager commandManager;
       GfshParser gfshParser;
       try {
@@ -147,29 +147,29 @@ public class CreateAlterDestroyRegionCommandsTest {
     ParseResult parseResult;
 	try {
 	    parseResult = gfshParser.parse(createCommand);
-	    System.out.println(parseResult.toString());   
+	    System.out.println(parseResult.toString());
 		commandResult = (CommandResult) parseResult.getMethod().invoke(parseResult.getInstance(), parseResult.getArguments());
 	    dumpResult(commandResult);
 	} catch (IllegalAccessException | IllegalArgumentException
 			| InvocationTargetException e) {
 		e.printStackTrace();
 	}
-	
+
 	// alter
 	try {
 	    parseResult = gfshParser.parse(alterCommand);
-	    System.out.println(parseResult.toString());   
+	    System.out.println(parseResult.toString());
 		commandResult = (CommandResult) parseResult.getMethod().invoke(parseResult.getInstance(), parseResult.getArguments());
 	    dumpResult(commandResult);
 	} catch (IllegalAccessException | IllegalArgumentException
 			| InvocationTargetException e) {
 		e.printStackTrace();
 	}
-	
+
 	// destroy
 	try {
 	    parseResult = gfshParser.parse(destroyCommand);
-	    System.out.println(parseResult.toString());   
+	    System.out.println(parseResult.toString());
 		commandResult = (CommandResult) parseResult.getMethod().invoke(parseResult.getInstance(), parseResult.getArguments());
 	    dumpResult(commandResult);
 	} catch (IllegalAccessException | IllegalArgumentException
@@ -185,6 +185,6 @@ public class CreateAlterDestroyRegionCommandsTest {
       while (commandResult.hasNextLine()) {
         builder.append(commandResult.nextLine()).append(System.getProperty("line.separator"));
       }
-      System.out.println(builder.toString());      
+      System.out.println(builder.toString());
     }
 }
