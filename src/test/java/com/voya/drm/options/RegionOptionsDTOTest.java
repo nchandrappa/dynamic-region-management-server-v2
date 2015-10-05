@@ -19,16 +19,16 @@ public class RegionOptionsDTOTest {
 	private static final byte[] ACCEPTABLE_NAME_BYTES = (LETTERS + NUMBERS).getBytes();
 
 	RegionOptionsBuilder regionOptionsDTO = new RegionOptionsBuilder();
-	
+
 	@Test
-	public void testOneOption() {		
+	public void testOneOption() {
 	  Map<String, String> regionOptions = new HashMap<String, String>();
 	  regionOptions.put("entry-idle-time-expiration", "1");
 
 	  RegionOption regionOption = regionOptionsDTO.buildRegionOptions(regionOptions);
 	  assertTrue(regionOption.getEntryIdleTimeExpiration() == 1);
 	}
-	
+
 	@Test
 	public void testAllTypesPositive() {
 	  Map<String, String> regionOptions = populateAllOptions();
@@ -37,14 +37,14 @@ public class RegionOptionsDTOTest {
 	}
 
 	private Map<String, String> populateAllOptions() {
-		
-		Map<String, String[]> regionOptionsMap = RegionOptionsBuilder.regionOptionsMap;
+
+		Map<String, String[]> regionOptionsMap = RegionOptionsBuilder.getRegionOptionsMap();
 		Map<String, String> regionOptions = new HashMap<String, String>();
-		
+
 		Random r = new Random(System.currentTimeMillis());
 		for (String optionName : regionOptionsMap.keySet()) {
 			String[] signatureArgs = regionOptionsMap.get(optionName);
-			String stringValue = createValue(signatureArgs[1], r); 
+			String stringValue = createValue(signatureArgs[1], r);
 			if (optionName.equalsIgnoreCase("type")) {
 				stringValue = "PARTITION";
 			}
@@ -52,7 +52,7 @@ public class RegionOptionsDTOTest {
 		}
 		return regionOptions;
 	}
-	
+
 	private String createValue(String type, Random r) {
 		byte[] bytes;
 		switch(type) {
@@ -74,7 +74,7 @@ public class RegionOptionsDTOTest {
 				return createRandomString(r, bytes);
 		}
 	}
-	
+
 	private String createRandomString(Random r, byte[] bytes) {
 		for (int i=0; i < bytes.length; i++) {
 			int n = r.nextInt(ACCEPTABLE_NAME_BYTES.length);
