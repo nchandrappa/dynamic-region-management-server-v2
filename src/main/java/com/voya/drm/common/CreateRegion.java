@@ -21,13 +21,14 @@ public class CreateRegion implements Function, Declarable {
     public static final String SUCCESSFUL = "successful";
     public static final String ALREADY_EXISTS = "alreadyExists";
 
-    private transient CreateRegionHelper2 createRegionHelper;
-    private transient RegionNameValidator regionNameValidator;
+
+    private CreateRegionHelper createRegionHelper;
+    RegionNameValidator regionNameValidator;
 
     public CreateRegion() {
         cache = CacheFactory.getAnyInstance();
         regionNameValidator = new RegionNameValidator(cache);
-        createRegionHelper = new CreateRegionHelper2(cache);
+        createRegionHelper = new CreateRegionHelper(cache);
     }
 
     public void execute(FunctionContext context) {

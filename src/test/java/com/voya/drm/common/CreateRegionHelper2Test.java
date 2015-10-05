@@ -27,7 +27,7 @@ public class CreateRegionHelper2Test {
 	@BeforeClass
 	public static void init() {
         CacheFactory cf = new CacheFactory();
-        cf.set("cache-xml-file", "/Users/wwilliams/Documents/git/dynamic-region-management-server-v2/grid/config/serverCache.xml");
+        cf.set("cache-xml-file", "./grid/config/serverCache.xml");
         cf.set("locators", "gemhost[10334]");
         cache = cf.create();
         createRegionHelper2 = new CreateRegionHelper2(cache);
@@ -44,7 +44,35 @@ public class CreateRegionHelper2Test {
 		      put(CliStrings.CREATE_REGION__STATISTICSENABLED, "true");
 		      put(CliStrings.CREATE_REGION__ENTRYEXPIRATIONTIMETOLIVE, "60");
 	    }};
+	    
+	    doCreate(regionName, regionOptions);
+		
+		regionOptions = new HashMap<String, String>() {{
+		      put(CliStrings.CREATE_REGION__TOTALNUMBUCKETS, "53");
+		}};
 
+		doCreate(regionName, regionOptions);
+		
+//		doDelete(regionName);
+		Assert.isTrue(true);
+
+	}
+
+	@SuppressWarnings("serial")
+	@Test
+	public void testDeleteRegion() {
+	    Random r = new Random(System.currentTimeMillis());
+	    String regionName = "Test" + r.nextInt(1000);
+		Map<String, String> regionOptions = new HashMap<String, String>() {{
+		      put(CliStrings.CREATE_REGION__REGIONSHORTCUT, "REPLICATE");
+	    }};
+
+	    doCreate(regionName, regionOptions);
+		doDelete(regionName);
+	}
+	
+	
+	private void doCreate(String regionName, Map<String, String> regionOptions) {
 		try {
 			createRegionHelper2.createRegion(regionName, regionOptions);
 		} catch (IllegalAccessException | IllegalArgumentException
@@ -52,46 +80,9 @@ public class CreateRegionHelper2Test {
 			fail("unsuccessful create. Maybe a misspelled region option? " + e.getMessage());
 		}
 		Assert.isTrue(true);
-		
-		regionOptions = new HashMap<String, String>() {{
-		      put(CliStrings.CREATE_REGION__TOTALNUMBUCKETS, "53");
-		}};
-		try {
-			createRegionHelper2.alterRegion(regionName, regionOptions);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			fail("unsuccessful alter. Maybe a missplled region option? " + e.getMessage());
-		}
-		Assert.isTrue(true);
-		
-		doDelete(regionName);
-		Assert.isTrue(true);
-
-	}
-
-	@Test
-	public void testDeleteRegion() {
-	    Random r = new Random(System.currentTimeMillis());
-	    String regionName = "Test" + r.nextInt(1000);
-		doDelete(regionName);
 	}
 	
-	@SuppressWarnings("serial")
 	private void doDelete(String regionName) {
-		Map<String, String> regionOptions = new HashMap<String, String>() {{
-		      put(CliStrings.CREATE_REGION__REGIONSHORTCUT, "REPLICATE");
-		      put(CliStrings.CREATE_REGION__STATISTICSENABLED, "true");
-		      put(CliStrings.CREATE_REGION__ENTRYEXPIRATIONTIMETOLIVE, "60");
-	    }};
-
-		try {
-			createRegionHelper2.createRegion(regionName, regionOptions);
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			fail("unsuccessful create. Maybe a missplled region option? " + e.getMessage());
-		}
-		Assert.isTrue(true);
-		
 		Region<?,?> region = cache.getRegion(regionName);
 		try {
 			region.destroyRegion();
