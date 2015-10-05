@@ -21,8 +21,8 @@ public class CreateRegion implements Function, Declarable {
     public static final String SUCCESSFUL = "successful";
     public static final String ALREADY_EXISTS = "alreadyExists";
 
-    private CreateRegionHelper createRegionHelper;
-    private RegionNameValidator regionNameValidator;
+    private transient CreateRegionHelper createRegionHelper;
+    private transient RegionNameValidator regionNameValidator;
 
     public CreateRegion() {
         cache = CacheFactory.getAnyInstance();
@@ -30,24 +30,24 @@ public class CreateRegion implements Function, Declarable {
         createRegionHelper = new CreateRegionHelper(cache);
     }
 
+    @SuppressWarnings("unchecked")
     public void execute(FunctionContext context) {
         try {
           Object arguments = context.getArguments();
             if (arguments == null || !(arguments instanceof List)
-              || ((List<?>)arguments).size() != 2) {
+              || ((List<?>) arguments).size() != 2) {
               throw new Exception("Two arguments required in list");
             }
 
             Object regionName = ((List<?>) arguments).get(0);
             regionNameValidator.validateRegionName(regionName);
 
-            @SuppressWarnings("unchecked")
             Map<String, String> regionOptions =
               (Map<String, String>) ((List<?>) arguments).get(1);
 
             this.cache.getLogger()
               .fine("Received Dyanamic Creation Request for: " + regionName);
-            String status = createOrRetrieveRegion(
+            String status = createOrGetRegion(
                 (String) regionName, (Map<String, String>) regionOptions);
             context.getResultSender().lastResult(status);
 
@@ -56,30 +56,33 @@ public class CreateRegion implements Function, Declarable {
         }
     }
 
-    String createOrRetrieveRegion(String regionName, Map<String, String> regionOptions)
-      throws RuntimeException, IllegalAccessException, InvocationTargetException {
+    String createOrGetRegion(final String regionName,
+      final Map<String, String> regionOptions)
+      throws RuntimeException,
+             IllegalAccessException,
+             InvocationTargetException {
 
       String result = SUCCESSFUL;
       Region<?, ?> region = this.cache.getRegion(regionName);
 
-        if (region != null) {
-          this.cache.getLogger().info("Region Already Exists: " + regionName);
-          result = ALREADY_EXISTS;
-          return result;
-        }
-
-        createRegionHelper.createRegion(regionName, regionOptions);
-
-        // region should now be populated
-        region = this.cache.getRegion(regionName);
-        if (region == null) {
-          throw new RuntimeException("Error: Region was not created. Check logs for reason.");
-        }
-
-        this.cache.getLogger().info("Region Creation Successful: " + regionName);
+      if (region != null) {
+        this.cache.getLogger().info("Region Already Exists: " + regionName);
+        result = ALREADY_EXISTS;
         return result;
+      }
+
+      createRegionHelper.createRegion(regionName, regionOptions);
+
+      // region should now be populated
+      region = this.cache.getRegion(regionName);
+      if (region == null) {
+        throw new RuntimeException("Error: Region was not created. Check logs for reason.");
+      }
+
+      this.cache.getLogger().info("Region Creation Successful: " + regionName);
+      return result;
     }
-    
+
     /*
      * (non-Javadoc)
      * @see com.gemstone.gemfire.cache.execute.Function#getId()
@@ -92,7 +95,7 @@ public class CreateRegion implements Function, Declarable {
      * (non-Javadoc)
      * @see com.gemstone.gemfire.cache.execute.Function#optimizeForWrite()
      */
-    public boolean optimizeForWrite() {
+     public boolean optimizeForWrite() {
         return false;
     }
 
@@ -109,13 +112,13 @@ public class CreateRegion implements Function, Declarable {
      * @see com.gemstone.gemfire.cache.execute.Function#hasResult()
      */
     public boolean hasResult() {
-        return true;
+      return true;
     }
 
     /*
      * (non-Javadoc)
      * @see com.gemstone.gemfire.cache.Declarable#init(java.util.Properties)
      */
-    public void init(Properties properties) {
+    public void init(final Properties properties) {
     }
 }

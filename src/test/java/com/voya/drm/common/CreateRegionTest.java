@@ -33,7 +33,7 @@ public class CreateRegionTest {
         put("type", "PARTITION_REDUNDANT_HEAP_LRU");
         put("badOption", "badValue");
       }};
-    regionCreator.createOrRetrieveRegion(regionName,
+    regionCreator.createOrGetRegion(regionName,
             regionOptions);
         fail("This should have failed on a bad option");
   }
