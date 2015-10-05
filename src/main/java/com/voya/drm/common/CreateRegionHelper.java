@@ -1,7 +1,5 @@
 package com.voya.drm.common;
 
-//import io.pivotal.drm.common.options.CloningEnabledOption;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
@@ -35,12 +33,11 @@ public class CreateRegionHelper {
          logWriter = cache.getLogger();
 
         try {
-	      commandManager = CommandManager.getInstance();
-	    } catch (ClassNotFoundException | IOException e) {
-	      // TODO Auto-generated catch block
-	      logWriter.error("Error instantiating a GemFire Command Manager. Internal error. Check logs", e);
-	      throw new RuntimeException("Error instantiating a GemFire Command Manager. Internal error. Check logs", e);
-	    }
+        commandManager = CommandManager.getInstance();
+      } catch (ClassNotFoundException | IOException e) {
+        logWriter.error("Error instantiating a GemFire Command Manager. Internal error. Check logs", e);
+        throw new RuntimeException("Error instantiating a GemFire Command Manager. Internal error. Check logs", e);
+      }
         gfshParser = new GfshParser(commandManager);
     }
 
@@ -57,7 +54,7 @@ public class CreateRegionHelper {
           ParseResult parseResult = gfshParser.parse(gfshCommand);
           logWriter.fine("Executing the GFSH command");
           CommandResult commandResult = (CommandResult) parseResult.getMethod()
-        		  .invoke(parseResult.getInstance(), parseResult.getArguments());
+              .invoke(parseResult.getInstance(), parseResult.getArguments());
           dumpResult(commandResult);
       } catch (CommandProcessingException e) {
             throw new RuntimeException("Gfsh could not execute your command.\n" +
@@ -69,7 +66,7 @@ public class CreateRegionHelper {
 
       StringBuffer sb = new StringBuffer("create region --name=" + regionName);
       for (Entry<String, String> option : regionOptions.entrySet()) {
-        // Appending each region option to gfsh command
+        // Append each region option to gfsh command
         sb.append(" --");
         sb.append(option.getKey());
         sb.append("=");

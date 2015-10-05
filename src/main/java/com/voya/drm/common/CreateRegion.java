@@ -21,9 +21,8 @@ public class CreateRegion implements Function, Declarable {
     public static final String SUCCESSFUL = "successful";
     public static final String ALREADY_EXISTS = "alreadyExists";
 
-
     private CreateRegionHelper createRegionHelper;
-    RegionNameValidator regionNameValidator;
+    private RegionNameValidator regionNameValidator;
 
     public CreateRegion() {
         cache = CacheFactory.getAnyInstance();
@@ -34,7 +33,8 @@ public class CreateRegion implements Function, Declarable {
     public void execute(FunctionContext context) {
         try {
           Object arguments = context.getArguments();
-            if (arguments == null || !(arguments instanceof List) || ((List<?>)arguments).size() != 2) {
+            if (arguments == null || !(arguments instanceof List)
+              || ((List<?>)arguments).size() != 2) {
               throw new Exception("Two arguments required in list");
             }
 
@@ -42,10 +42,13 @@ public class CreateRegion implements Function, Declarable {
             regionNameValidator.validateRegionName(regionName);
 
             @SuppressWarnings("unchecked")
-            Map<String, String> regionOptions = (Map<String, String>) ((List<?>) arguments).get(1);
+            Map<String, String> regionOptions =
+              (Map<String, String>) ((List<?>) arguments).get(1);
 
-            this.cache.getLogger().fine("Received Dyanamic Creation Request for: " + regionName);
-            String status = createOrRetrieveRegion((String)regionName, (Map<String, String>)regionOptions);
+            this.cache.getLogger()
+              .fine("Received Dyanamic Creation Request for: " + regionName);
+            String status = createOrRetrieveRegion(
+                (String) regionName, (Map<String, String>) regionOptions);
             context.getResultSender().lastResult(status);
 
         } catch (Exception exception) {
@@ -53,11 +56,11 @@ public class CreateRegion implements Function, Declarable {
         }
     }
 
-
-    String createOrRetrieveRegion(String regionName, Map<String, String> regionOptions) throws RuntimeException, IllegalAccessException, InvocationTargetException {
+    String createOrRetrieveRegion(String regionName, Map<String, String> regionOptions)
+      throws RuntimeException, IllegalAccessException, InvocationTargetException {
 
       String result = SUCCESSFUL;
-      Region<?,?> region = this.cache.getRegion(regionName);
+      Region<?, ?> region = this.cache.getRegion(regionName);
 
         if (region != null) {
           this.cache.getLogger().info("Region Already Exists: " + regionName);
@@ -76,23 +79,43 @@ public class CreateRegion implements Function, Declarable {
         this.cache.getLogger().info("Region Creation Successful: " + regionName);
         return result;
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * @see com.gemstone.gemfire.cache.execute.Function#getId()
+     */
     public String getId() {
         return getClass().getSimpleName();
     }
 
+    /*
+     * (non-Javadoc)
+     * @see com.gemstone.gemfire.cache.execute.Function#optimizeForWrite()
+     */
     public boolean optimizeForWrite() {
         return false;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see com.gemstone.gemfire.cache.execute.Function#isHA()
+     */
     public boolean isHA() {
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see com.gemstone.gemfire.cache.execute.Function#hasResult()
+     */
     public boolean hasResult() {
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see com.gemstone.gemfire.cache.Declarable#init(java.util.Properties)
+     */
     public void init(Properties properties) {
     }
 }
